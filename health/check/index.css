@@ -1,0 +1,1192 @@
+/* 健康档案系统 - 检测页面样式 */
+
+/* 导航栏样式 */
+.health-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 182, 193, 0.3);
+    padding: 10px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+/* 页面内容与导航栏的间距 */
+.eve-container {
+    margin-top: 100px; /* 为固定导航栏留出足够空间 */
+    padding-top: 20px; /* 额外的内边距确保内容不被遮挡 */
+}
+
+/* 下拉菜单容器 */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* 下拉按钮 */
+.dropdown-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(255, 182, 193, 0.1);
+    border: 1px solid rgba(255, 182, 193, 0.3);
+    border-radius: 12px;
+    color: #e17055;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.dropdown-btn:hover {
+    background: rgba(255, 182, 193, 0.2);
+    border-color: rgba(255, 182, 193, 0.5);
+    transform: translateY(-1px);
+}
+
+/* 下拉箭头 */
+.dropdown-arrow {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.dropdown.show .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* 下拉内容 */
+.dropdown-content {
+    display: none !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    background: white;
+    border: 1px solid rgba(255, 182, 193, 0.3);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10001;
+    margin-top: 0px; /* 移除间隙，让菜单紧贴按钮 */
+    overflow: hidden;
+}
+
+.dropdown.show .dropdown-content,
+.dropdown:hover .dropdown-content {
+    display: block !important;
+}
+
+.dropdown:hover .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* 为了确保鼠标移动到下拉菜单时不会隐藏，添加过渡区域 */
+.dropdown::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 2px; /* 很小的缓冲区域 */
+    background: transparent;
+    z-index: 10000;
+}
+
+/* 下拉选项 */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255, 182, 193, 0.1);
+    transition: background 0.2s ease;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background: rgba(255, 182, 193, 0.1);
+    color: #e17055;
+}
+
+.dropdown-item .icon {
+    font-size: 16px;
+}
+
+/* 占位符 */
+.dropdown-placeholder {
+    padding: 12px 16px;
+    color: #999;
+    font-size: 13px;
+    text-align: center;
+    font-style: italic;
+}
+
+/* 导航右侧 */
+.nav-spacer {
+    flex: 1;
+}
+
+.nav-back {
+    padding: 8px 16px;
+    background: rgba(116, 185, 255, 0.1);
+    border: 1px solid rgba(116, 185, 255, 0.3);
+    border-radius: 12px;
+    color: #0984e3;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.nav-back:hover {
+    background: rgba(116, 185, 255, 0.2);
+    border-color: rgba(116, 185, 255, 0.5);
+}
+
+/* 搜索按钮 */
+.search-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 182, 193, 0.1);
+    border: 1px solid rgba(255, 182, 193, 0.3);
+    border-radius: 50%;
+    color: #e17055;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.search-btn:hover {
+    background: rgba(255, 182, 193, 0.2);
+    border-color: rgba(255, 182, 193, 0.5);
+}
+
+/* 历史记录功能样式 */
+.history-section {
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 182, 193, 0.2);
+    padding-top: 15px;
+}
+
+.history-header {
+    margin-bottom: 15px;
+}
+
+.history-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: rgba(116, 185, 255, 0.05);
+    border: 1px solid rgba(116, 185, 255, 0.2);
+    border-radius: 8px;
+    font-size: 14px;
+    color: #0984e3;
+    font-weight: 500;
+}
+
+.history-years-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.year-group {
+    border: 1px solid rgba(116, 185, 255, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.year-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: rgba(116, 185, 255, 0.1);
+    border-bottom: 1px solid rgba(116, 185, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    color: #0984e3;
+    font-weight: 500;
+}
+
+.year-toggle:hover {
+    background: rgba(116, 185, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.year-content {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.history-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: rgba(116, 185, 255, 0.1);
+    border: 1px solid rgba(116, 185, 255, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    color: #0984e3;
+    font-weight: 500;
+}
+
+.history-toggle:hover {
+    background: rgba(116, 185, 255, 0.2);
+    border-color: rgba(116, 185, 255, 0.5);
+    transform: translateY(-1px);
+}
+
+.history-icon {
+    font-size: 16px;
+}
+
+.history-text {
+    flex: 1;
+}
+
+.history-arrow {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.history-content {
+    margin-top: 15px;
+    border-left: 3px solid rgba(116, 185, 255, 0.3);
+    padding-left: 15px;
+}
+
+.history-item {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.history-item:last-child {
+    margin-bottom: 0;
+}
+
+.history-year {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0984e3;
+    margin-bottom: 10px;
+    padding: 5px 12px;
+    background: rgba(116, 185, 255, 0.1);
+    border-radius: 15px;
+    display: inline-block;
+    border: 1px solid rgba(116, 185, 255, 0.2);
+}
+
+.history-card-content {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(116, 185, 255, 0.2);
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 8px;
+}
+
+.history-card-content h2 {
+    font-size: 20px !important;
+    margin-bottom: 15px !important;
+}
+
+.history-card-content .eve-info-box,
+.history-card-content .eve-note-item {
+    font-size: 13px;
+}
+
+/* 历史记录展开动画 */
+.history-content {
+    animation: slideDown 0.3s ease;
+}
+
+/* 折叠按钮样式 */
+.history-collapse {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: rgba(255, 182, 193, 0.1);
+    border: 1px solid rgba(255, 182, 193, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    color: #e17055;
+    font-weight: 500;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.history-collapse:hover {
+    background: rgba(255, 182, 193, 0.2);
+    border-color: rgba(255, 182, 193, 0.5);
+    transform: translateY(-1px);
+}
+
+.collapse-icon {
+    font-size: 16px;
+}
+
+.collapse-text {
+    flex: 1;
+    text-align: center;
+}
+
+.collapse-arrow {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+        padding-top: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 1000px;
+        padding-top: 15px;
+    }
+}
+
+/* 高亮搜索结果 */
+.search-highlight {
+    background: rgba(255, 235, 59, 0.3);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+/* 隐藏不匹配的测试卡片 */
+.eve-card.search-hidden {
+    display: none;
+}
+
+/* 页面特定样式 */
+.header-meta {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #74b9ff;
+}
+
+.header-meta span {
+    background: rgba(116, 185, 255, 0.1);
+    padding: 5px 15px;
+    border-radius: 15px;
+    border: 1px solid rgba(116, 185, 255, 0.2);
+}
+
+.diagnosis-title {
+    color: #e17055;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.diagnosis-title::before {
+    content: "🏥";
+    font-size: 28px;
+}
+
+.allergy-title {
+    color: #00b894;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.allergy-title::before {
+    content: "🌿";
+    font-size: 28px;
+}
+
+.test-date {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0984e3;
+}
+
+.chart-title {
+    color: #d63384;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chart-title::before {
+    content: "📈";
+    font-size: 24px;
+}
+
+#thyroidChart {
+    max-height: 400px;
+    margin: 20px 0;
+}
+
+.medication-item {
+    background: rgba(0, 184, 148, 0.1);
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    border-left: 4px solid #00b894;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.medication-item::before {
+    content: "💊";
+    font-size: 18px;
+}
+
+.notes-title {
+    color: #74b9ff;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.notes-title::before {
+    content: "📝";
+    font-size: 24px;
+}
+
+.footer-info {
+    text-align: center;
+    padding: 20px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+}
+
+/* PC端eve-container上边距 - 此处移除重复设置，统一在前面设置 */
+
+@media (max-width: 768px) {
+    /* 移动端重置eve-container上边距 */
+    .eve-container {
+        margin-top: 70px; /* 减少上边距，因为导航栏变矮了 */
+        padding-top: 15px; /* 移动端稍小的内边距 */
+    }
+    
+    .header-meta {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    /* 移动端导航栏样式 */
+    .health-nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        transform: none;
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 0;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 8px;
+        overflow-x: auto;
+        overflow-y: visible;
+        box-sizing: border-box;
+        /* 隐藏滚动条但保持滚动功能 */
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+    }
+    
+    /* 隐藏滚动条 - WebKit browsers */
+    .health-nav::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .nav-item {
+        padding: 6px 12px;
+        font-size: 12px;
+        border-radius: 12px;
+        gap: 5px;
+        flex-shrink: 0;
+        white-space: nowrap;
+        min-width: calc((100vw - 120px) / 3); /* 最多显示3个 */
+        max-width: calc((100vw - 120px) / 3);
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .nav-item .icon {
+        font-size: 14px;
+    }
+    
+    .search-container {
+        margin-left: 8px;
+        padding-left: 8px;
+        border-left: 1px solid rgba(255, 182, 193, 0.3);
+        flex-shrink: 0;
+    }
+    
+    .search-toggle {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+    
+    .search-input-container.active {
+        position: absolute;
+        top: 100%;
+        left: 10px;
+        right: 10px;
+        margin: 5px 0;
+        z-index: 9997;
+    }
+    
+    .search-input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* 移动端返回按钮调整 */
+    .eve-back-button {
+        top: 120px !important; /* 根据新的导航栏高度调整 */
+        z-index: 999;
+        left: 20px !important;
+        padding: 6px 12px !important; /* 减小按钮尺寸 */
+        font-size: 12px !important; /* 减小字体 */
+        border-radius: 12px !important; /* 相应调整圆角 */
+        min-width: auto !important; /* 取消最小宽度 */
+        margin-top: 0; /* 移除额外的margin-top，避免重复偏移 */
+    }
+    
+    /* 移动端下拉菜单 */
+    .nav-dropdown-content {
+        min-width: 150px;
+        left: auto;
+        right: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .health-nav {
+        padding: 6px 8px;
+        gap: 6px;
+    }
+    
+    .nav-item {
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+    
+    .nav-item .icon {
+        font-size: 12px;
+    }
+    
+    .search-toggle {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+}
+
+/* 年份分组历史记录样式 */
+.history-header {
+    margin-bottom: 15px;
+}
+
+.history-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: rgba(116, 185, 255, 0.05);
+    border: 1px solid rgba(116, 185, 255, 0.2);
+    border-radius: 8px;
+    font-size: 14px;
+    color: #0984e3;
+    font-weight: 500;
+}
+
+.history-years-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.year-group {
+    border: 1px solid rgba(116, 185, 255, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.year-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: rgba(116, 185, 255, 0.1);
+    border-bottom: 1px solid rgba(116, 185, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    color: #0984e3;
+    font-weight: 500;
+}
+
+.year-toggle:hover {
+    background: rgba(116, 185, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.year-content {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.year-content .history-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-left: 3px solid rgba(116, 185, 255, 0.3);
+    margin-left: 10px;
+}
+
+.year-content .history-card-content {
+    background: rgba(255, 255, 255, 0.9);
+    margin-top: 0;
+}
+
+.year-content .history-card-content h2 {
+    font-size: 18px !important;
+    margin-bottom: 12px !important;
+}
+
+/* ==================== 移动端侧边菜单样式 ==================== */
+
+/* 移动端汉堡菜单按钮 */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    color: #d63384;
+}
+
+.mobile-menu-btn:hover {
+    background-color: rgba(255, 182, 193, 0.2);
+}
+
+/* 桌面端导航容器 */
+.desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+}
+
+/* 移动端侧边菜单 */
+.mobile-sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100vh;
+    background: linear-gradient(180deg, #ffeef0 0%, #fff5f7 100%);
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+    transition: left 0.3s ease;
+    z-index: 10002;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.mobile-sidebar.open {
+    left: 0;
+}
+
+/* 侧边菜单遮罩层 */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 10001;
+}
+
+.sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 侧边菜单头部 */
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 182, 193, 0.3);
+    background: rgba(255, 255, 255, 0.8);
+    position: relative;
+}
+
+.sidebar-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #d63384;
+    margin: 0;
+}
+
+.sidebar-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-close:hover {
+    background-color: rgba(255, 182, 193, 0.2);
+}
+
+/* 侧边菜单项目 */
+.sidebar-section {
+    margin-bottom: 5px;
+}
+
+.sidebar-section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px 10px 20px;
+    font-weight: bold;
+    color: #d63384;
+    font-size: 16px;
+    margin: 0;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-bottom: 1px solid rgba(255, 182, 193, 0.1);
+}
+
+.sidebar-section-title:hover {
+    background: rgba(255, 182, 193, 0.1);
+}
+
+.sidebar-section-arrow {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+    color: #d63384;
+}
+
+.sidebar-section.collapsed .sidebar-section-arrow {
+    transform: rotate(-90deg);
+}
+
+.sidebar-section-content {
+    max-height: 500px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.sidebar-section.collapsed .sidebar-section-content {
+    max-height: 0;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255, 182, 193, 0.05);
+}
+
+.sidebar-item:hover {
+    background-color: rgba(255, 182, 193, 0.15);
+    padding-left: 25px;
+}
+
+.sidebar-item .icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* 侧边菜单滚动优化 */
+.mobile-sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100vh;
+    background: linear-gradient(180deg, #ffeef0 0%, #fff5f7 100%);
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+    transition: left 0.3s ease;
+    z-index: 10002;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0;
+    /* 自定义滚动条 */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 182, 193, 0.3) transparent;
+}
+
+.mobile-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.mobile-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.mobile-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 182, 193, 0.3);
+    border-radius: 3px;
+}
+
+.mobile-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 182, 193, 0.5);
+}
+
+/* 侧边菜单内容容器 */
+.sidebar-content {
+    padding-bottom: 20px;
+}
+
+/* 菜单项计数显示 */
+.sidebar-section-count {
+    font-size: 12px;
+    color: #999;
+    background: rgba(255, 182, 193, 0.2);
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 16px;
+    text-align: center;
+}
+
+/* 侧边菜单动画效果 */
+@keyframes sidebarSlideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.mobile-sidebar.open {
+    animation: sidebarSlideIn 0.3s ease;
+}
+
+/* 折叠展开动画 */
+@keyframes expandSection {
+    from {
+        max-height: 0;
+        opacity: 0;
+    }
+    to {
+        max-height: 500px;
+        opacity: 1;
+    }
+}
+
+@keyframes collapseSection {
+    from {
+        max-height: 500px;
+        opacity: 1;
+    }
+    to {
+        max-height: 0;
+        opacity: 0;
+    }
+}
+
+.sidebar-section-content {
+    overflow: hidden;
+    transition: all 0.3s ease;
+    opacity: 1;
+}
+
+.sidebar-section.collapsed .sidebar-section-content {
+    animation: collapseSection 0.3s ease forwards;
+}
+
+.sidebar-section:not(.collapsed) .sidebar-section-content {
+    animation: expandSection 0.3s ease forwards;
+}
+
+/* 菜单项悬停动画 */
+.sidebar-item {
+    transform: translateX(0);
+    transition: all 0.3s ease;
+}
+
+.sidebar-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(255, 182, 193, 0.2);
+}
+
+/* 分组标题悬停效果 */
+.sidebar-section-title {
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar-section-title::before {
+    content: '';
+    position: absolute;
+    left: -100%;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 182, 193, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.sidebar-section-title:hover::before {
+    left: 100%;
+}
+
+/* 活跃状态的菜单项 */
+.sidebar-item.active {
+    background-color: rgba(255, 182, 193, 0.2);
+    border-left: 3px solid #d63384;
+    font-weight: 600;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .desktop-nav {
+        display: none;
+    }
+    
+    .health-nav {
+        justify-content: space-between;
+        padding: 2px 15px; /* 减少上下内边距从12px到8px */
+    }
+    
+    /* 在移动端添加标题 */
+    .health-nav::before {
+        content: '健康档案';
+        font-weight: bold;
+        color: #d63384;
+        font-size: 16px;
+    }
+    
+    /* 隐藏桌面端的下拉菜单 */
+    .dropdown {
+        display: none !important;
+    }
+    
+    /* 调整页面容器间距 - 在侧边菜单模式下也需要足够的上边距 */
+    .eve-container {
+        margin-top: 70px; /* 与移动端媒体查询中的设置保持一致 */
+        padding: 15px 15px 0 15px; /* 上内边距，左右内边距，底部无内边距 */
+    }
+    
+    /* 移动端侧边菜单优化 */
+    .mobile-sidebar {
+        width: 280px;
+        left: -280px;
+    }
+    
+    .sidebar-item {
+        font-size: 15px;
+        padding: 15px 20px;
+    }
+    
+    .sidebar-section-title {
+        font-size: 15px;
+        padding: 12px 20px 8px 20px;
+    }
+}
+
+/* 超小屏幕优化 */
+@media (max-width: 360px) {
+    .mobile-sidebar {
+        width: 260px;
+        left: -260px;
+    }
+    
+    .sidebar-item {
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+    
+    .sidebar-section-title {
+        padding: 10px 15px 6px 15px;
+        font-size: 14px;
+    }
+    
+    .sidebar-section-count {
+        font-size: 11px;
+        padding: 1px 4px;
+    }
+}
+
+/* 平板设备适配 */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .health-nav {
+        padding: 12px 15px;
+        gap: 15px;
+    }
+    
+    .dropdown-btn {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    
+    .dropdown-content {
+        min-width: 180px;
+    }
+}
+
+/* 医疗建议高亮效果 */
+.advice-highlight {
+    animation: highlightPulse 3s ease-in-out;
+    border-left: 4px solid #e74c3c !important;
+    background: linear-gradient(45deg, rgba(231, 76, 60, 0.15), rgba(231, 76, 60, 0.05)) !important;
+}
+
+@keyframes highlightPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4);
+    }
+    25% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 8px rgba(231, 76, 60, 0.2);
+    }
+    50% {
+        transform: scale(1.01);
+        box-shadow: 0 0 0 12px rgba(231, 76, 60, 0.1);
+    }
+    75% {
+        transform: scale(1.01);
+        box-shadow: 0 0 0 8px rgba(231, 76, 60, 0.05);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+    }
+}
+
+/* 独立医疗建议显示样式 */
+#medicalAdviceCard {
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.advice-section {
+    transition: all 0.3s ease;
+}
+
+.advice-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 医疗建议总览样式 */
+.advice-overview-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.advice-overview-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--card-color, #74b9ff), transparent);
+    transition: all 0.3s ease;
+}
+
+.advice-overview-card:hover::before {
+    height: 5px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    #overviewContent {
+        padding: 0 10px;
+    }
+    
+    .advice-overview-card {
+        margin-bottom: 15px;
+    }
+    
+    .advice-overview-card h3 {
+        font-size: 16px !important;
+    }
+    
+    .advice-overview-card h3 span:last-child {
+        display: none;
+    }
+}

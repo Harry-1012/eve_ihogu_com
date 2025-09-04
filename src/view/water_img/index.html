@@ -1,0 +1,219 @@
+﻿<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="../../../res/img/eveac.ico" type="image/x-icon" />
+    <title>图片批处理 裁剪/水印</title>
+    <link
+      rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/element-ui@2.15.14/lib/theme-chalk/index.css"
+    />
+    <link rel="stylesheet" href="../../css/img.css" />
+  </head>
+<section id="imgPage">
+    <hr>
+    <h1 style="text-align: center;">图片批量添加水印</h1>
+    <hr>
+
+    <el-form label-position='left' label-width='100%' style="margin-left: 15px;">
+        <el-form-item v-if="false" label="是否添加水印" :label-width="formLabelWidth">
+            <el-radio-group v-model="isAddWater">
+                <el-radio :label="true">开启水印</el-radio>
+                <el-radio :label="false">关闭水印</el-radio>
+            </el-radio-group>
+        </el-form-item>
+
+        <el-form-item label="上传水印图片" :label-width="formLabelWidth">
+            <el-upload class="avatar-uploader" action="../../../../public/index.php?s=Examples_EveUpload.gowater"
+                :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                <img v-if="waterimageUrl" :src="waterimageUrl" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+        </el-form-item>
+
+        <el-form-item label="选择水印位置" :label-width="formLabelWidth">
+            <el-select size='small ' style="width: 300px;" v-model="waterImgType" clearable placeholder="请选择水印位置">
+                <el-option label="左上角水印" key="1" :value="1"></el-option>
+                <el-option label="上居中水印" key="2" :value="2"></el-option>
+                <el-option label="右上角水印" key="3" :value="3"></el-option>
+                <el-option label="左居中水印" key="4" :value="4"></el-option>
+                <el-option label="居中水印" key="5" :value="5"></el-option>
+                <el-option label="右居中水印" key="6" :value="6"></el-option>
+                <el-option label="左下角水印" key="7" :value="7"></el-option>
+                <el-option label="下居中水印" key="8" :value="8"></el-option>
+                <el-option label="右下角水印" key="9" :value="9"></el-option>
+            </el-select>
+        </el-form-item>
+
+        <el-form-item label="水印宽度(像素)" style="width: 300px;" :label-width="formLabelWidth">
+            <el-input size='small ' type='number' placeholder="请输入水印宽度(像素)" v-model="waterImgWidth" clearable>
+            </el-input>
+        </el-form-item>
+
+        <el-form-item label="水印透明度" :label-width="formLabelWidth">
+            <el-input placeholder="请输入水印透明度(1-100)" v-model="opcity">
+                <template slot="append">%</template>
+            </el-input>
+        </el-form-item>
+    </el-form>
+    <div style="margin-bottom: 5px;">
+        <el-button @click="startGo" v-if='sumCount!=1' size="small" type="warning">开始下载</el-button>
+        <el-tag v-if="sumCount!=1" type="success">成功数量:{{sumCount-1}}</el-tag>
+    </div>
+    <el-upload multiple='true' limit='500' :on-success='uploadFileSuccess' :on-error='uploadFileError'
+        class="upload-demo" :action="uploadAction()" :on-preview="handlePreview" :on-remove="handleRemove"
+        :file-list="fileList" list-type="picture">
+        <el-button size="small" v-if='waterimageUrl' type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png/jpeg文件,且不超过5M,一次最多500个</div>
+    </el-upload>
+
+</section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/element-ui@2.15.14/lib/index.js"></script>
+<script>
+    new Vue({
+        el: '#imgPage',
+        data: {
+            isAddWater: true,
+            formLabelWidth: '130px',
+            waterImgType: 1,
+            options: [
+                {
+                    'value': 1,
+                    'label': '等比例',
+                }, {
+                    'value': 2,
+                    'label': '填充',
+                }, {
+                    'value': 3,
+                    'label': '居中',
+                }, {
+                    'value': 4,
+                    'label': '左上角',
+                }, {
+                    'value': 5,
+                    'label': '右下角',
+                }, {
+                    'value': 6,
+                    'label': '固定尺寸',
+                },
+            ],
+            showInputW: '',
+            showInputH: '',
+            opcity: 80,
+            cutImgType: null,
+            cutImgH: '',
+            cutImgW: '',
+            active: 0,
+            fileList: [],
+            allSuccessFile: [],
+            warterImgName: '',
+            waterImgHeight: 100,
+            waterImgWidth: 100,
+            sumCount: 1,
+            showUploadDom: function () {
+                let res = false;
+                if (this.cutImgType && this.cutImgType != 1 && this.cutImgH && this.cutImgW) {
+                    res = true;
+                } else if (this.cutImgType) {
+                    if (this.cutImgType == 1) {
+                        if (this.cutImgH || this.cutImgW) {
+                            res = true;
+                        } else {
+                            res = false;
+                        }
+                    }
+                } else {
+                    res = false;
+                }
+                return res;
+            },
+            uploadAction: function () {
+                let url = '../../../../public/index.php?s=Examples_EveUpload.go';
+                url = url + '&dont_modify_img=true';
+                // 如果有水印
+                if (this.waterimageUrl) {
+                    url = url + '&waterimgtype=' + this.waterImgType;
+                    url = url + '&waterimgname=' + this.warterImgName;
+                    url = url + '&opcity=' + this.opcity;
+                    url = url + '&waterimgh=' + this.waterImgHeight;
+                    url = url + '&waterimgw=' + this.waterImgWidth;
+
+                }
+                return url;
+            },
+            waterimageUrl: '',
+        },
+        methods: {
+            selectTypeChange(value) {
+                if (value === 1) {
+                    this.cutImgH = '';
+                }
+            },
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePreview(file) {
+                console.log(file);
+            },
+            uploadFileSuccess(res, file, fileList) {
+                this.$message({
+                    showClose: true,
+                    message: '[' + file.name + ' ]上传成功',
+                    type: 'success'
+                });
+                this.allSuccessFile.push(res.data.filename);
+                let listFileForServer = this.allSuccessFile;
+                this.sumCount = this.sumCount + 1;
+            },
+            uploadFileError(res, file, fileList) {
+                this.sumCount = this.sumCount + 1;
+                this.$message({
+                    message: file.name + ' 上传失败!',
+                    duration: 0,
+                    type: 'warning'
+                });
+            },
+            startGo() {
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在执行批处理...即将开始下载,请稍候...',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+
+                let listFileForServer = this.allSuccessFile;
+                $.ajax({
+                    url: "../../../../public/index.php?s=Examples_EveUpload.zipfile",
+                    data: {
+                        list: listFileForServer,
+                    },
+                    timeout: 1000*60*5,
+                    type: "POST",
+                    success: function (res) {
+                        setTimeout(() => {
+                            loading.close();
+                        }, 666);
+                        location.href = res.data.url;
+                    }
+                });
+            },
+            handleAvatarSuccess(res, file) {
+                this.waterimageUrl = URL.createObjectURL(file.raw);
+                this.warterImgName = res.data.filename;
+            },
+            beforeAvatarUpload(file) {
+                const isJPG = file.type == 'image/jpeg' || file.type == 'image/png' || file.type == 'image/jpg';
+                const isLt2M = file.size / 1024 / 1024 < 5;
+
+                if (!isJPG) {
+                    this.$message.error('上传水印图片只能是 JPG/PNG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传水印图片大小不能超过 5MB!');
+                }
+                return isJPG && isLt2M;
+            },
+        }
+    });
+</script>

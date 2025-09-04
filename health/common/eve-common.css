@@ -1,0 +1,460 @@
+/* 
+ * Eve Health System - Common Styles
+ * 通用样式文件 - 用于健康管理系统的所有页面
+ */
+
+/* 全局重置和基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    color: #2d3436;
+}
+
+/* 通用配色变量 */
+:root {
+    /* 主色调 - 粉色系 */
+    --primary-pink: #fd79a8;
+    --secondary-pink: #fab1a0;
+    --light-pink: #ffeaa7;
+    --accent-pink: #d63384;
+    --hover-pink: #e84393;
+    
+    /* 辅助色 */
+    --blue-accent: #74b9ff;
+    --green-normal: #00b894;
+    --red-abnormal: #e74c3c;
+    --purple-gradient: linear-gradient(135deg, #c39bd3 0%, #bb8fce 50%, #a569bd 100%);
+    
+    /* 渐变色 */
+    --pink-gradient: linear-gradient(45deg, #fd79a8, #fdcb6e);
+    --pink-gradient-hover: linear-gradient(45deg, #e84393, #f39c12);
+    --background-gradient: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 30%, #fd79a8 70%, #e17055 100%);
+    
+    /* 阴影 */
+    --shadow-light: 0 4px 15px rgba(253, 121, 168, 0.3);
+    --shadow-medium: 0 8px 25px rgba(253, 121, 168, 0.4);
+    --shadow-heavy: 0 15px 35px rgba(253, 121, 168, 0.2);
+    
+    /* 圆角 */
+    --radius-small: 10px;
+    --radius-medium: 15px;
+    --radius-large: 20px;
+    --radius-round: 25px;
+    
+    /* 间距 */
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+    --spacing-md: 15px;
+    --spacing-lg: 20px;
+    --spacing-xl: 30px;
+    --spacing-xxl: 40px;
+}
+
+/* 通用背景样式 */
+.eve-background {
+    background: var(--background-gradient);
+    min-height: 100vh;
+}
+
+.eve-background-simple {
+    background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 50%, #fd79a8 100%);
+    min-height: 100vh;
+}
+
+/* 通用卡片样式 */
+.eve-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--radius-large);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-heavy);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(253, 121, 168, 0.1);
+    margin-bottom: var(--spacing-xl);
+}
+
+.eve-card-small {
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* 通用按钮样式 */
+.eve-button {
+    background: var(--pink-gradient);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: var(--radius-round);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-light);
+}
+
+.eve-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+    background: var(--pink-gradient-hover);
+}
+
+.eve-button:active {
+    transform: translateY(0);
+}
+
+.eve-button-large {
+    padding: 15px 30px;
+    font-size: 16px;
+}
+
+.eve-button-small {
+    padding: 8px 16px;
+    font-size: 12px;
+}
+
+/* 返回按钮通用样式 */
+.eve-back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+}
+
+.eve-back-button::before {
+    content: "←";
+    font-size: 16px;
+}
+
+/* 返回顶部按钮通用样式 */
+.back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: var(--pink-gradient);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: var(--shadow-light);
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-to-top.show {
+    opacity: 0.5;
+    visibility: visible;
+}
+
+.back-to-top:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-medium);
+    background: var(--pink-gradient-hover);
+    opacity: 1;
+}
+
+.back-to-top:active {
+    transform: translateY(-1px);
+    opacity: 0.5;
+}
+
+/* 标题样式 */
+.eve-title {
+    color: var(--accent-pink);
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(253, 121, 168, 0.2);
+    text-align: center;
+}
+
+.eve-title-large {
+    font-size: 32px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.eve-title-medium {
+    font-size: 24px;
+    margin-bottom: var(--spacing-md);
+}
+
+.eve-title-small {
+    font-size: 20px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.eve-title-with-flowers::before {
+    content: "🌸";
+    margin-right: 15px;
+}
+
+.eve-title-with-flowers::after {
+    content: "🌸";
+    margin-left: 15px;
+}
+
+/* 表格样式 */
+.eve-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: var(--radius-medium);
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.eve-table th {
+    background: var(--pink-gradient);
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.eve-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.eve-table tr:nth-child(even) {
+    background: rgba(253, 121, 168, 0.05);
+}
+
+.eve-table tr:hover {
+    background: rgba(253, 121, 168, 0.1);
+    transform: scale(1.02);
+    transition: all 0.2s ease;
+}
+
+.eve-table .normal {
+    color: var(--green-normal);
+    font-weight: 500;
+}
+
+.eve-table .abnormal {
+    color: var(--red-abnormal);
+    font-weight: bold;
+}
+
+/* 信息框样式 */
+.eve-info-box {
+    background: linear-gradient(45deg, rgba(116, 185, 255, 0.1), rgba(253, 121, 168, 0.1));
+    padding: 15px 20px;
+    border-radius: var(--radius-medium);
+    border-left: 4px solid var(--blue-accent);
+    margin-bottom: var(--spacing-lg);
+}
+
+.eve-note-item {
+    background: rgba(116, 185, 255, 0.1);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: var(--spacing-sm);
+    border-left: 4px solid var(--blue-accent);
+}
+
+/* 渐变文本 */
+.eve-gradient-text {
+    background: var(--pink-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 动画 */
+@keyframes eve-fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes eve-slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes eve-pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 107, 157, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(255, 107, 157, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 107, 157, 0);
+    }
+}
+
+.eve-animate-fadeInUp {
+    animation: eve-fadeInUp 0.6s ease-out;
+}
+
+.eve-animate-slideInRight {
+    animation: eve-slideInRight 0.5s ease-out;
+}
+
+.eve-animate-pulse {
+    animation: eve-pulse 2s infinite;
+}
+
+/* 容器样式 */
+.eve-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+}
+
+.eve-container-small {
+    max-width: 600px;
+}
+
+.eve-container-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* 网格布局 */
+.eve-grid {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.eve-grid-2 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.eve-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.eve-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* 统计卡片 */
+.eve-stat-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: var(--radius-small);
+    padding: var(--spacing-md);
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.eve-stat-number {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-pink);
+    margin-bottom: var(--spacing-xs);
+}
+
+.eve-stat-label {
+    font-size: 12px;
+    color: #666;
+}
+
+/* 状态指示器 */
+.eve-status-normal {
+    color: var(--green-normal);
+}
+
+.eve-status-normal::before {
+    content: "✓ ";
+}
+
+.eve-status-abnormal {
+    color: var(--red-abnormal);
+}
+
+.eve-status-abnormal::before {
+    content: "↑ ";
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .eve-container {
+        padding: var(--spacing-sm);
+    }
+    
+    .eve-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .eve-grid-2,
+    .eve-grid-3,
+    .eve-grid-4 {
+        grid-template-columns: 1fr;
+    }
+    
+    .eve-back-button {
+        position: static;
+        margin: var(--spacing-sm) auto var(--spacing-lg);
+        display: block;
+        width: fit-content;
+    }
+    
+    .eve-title-large {
+        font-size: 24px;
+    }
+    
+    .eve-table {
+        font-size: 12px;
+    }
+    
+    .eve-table th,
+    .eve-table td {
+        padding: 8px 5px;
+    }
+    
+    /* 移动端返回顶部按钮调整 */
+    .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .eve-table th:nth-child(4),
+    .eve-table td:nth-child(4) {
+        display: none;
+    }
+    
+    .eve-card {
+        margin: var(--spacing-sm);
+        padding: var(--spacing-md);
+    }
+}

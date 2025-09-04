@@ -1,0 +1,14 @@
+{
+  "patientInfo": {
+    "name": "患者A",
+    "lastUpdate": "2025-01-25",
+    "institution": "某市人民医院检验科",
+    "doctors": "张医生（内分泌科/过敏科）"
+  },
+  "activeTests": ["thyroid", "allergy"],
+  "followUpSchedule": {
+    "thyroid": "每3-6个月复查一次",
+    "allergy": "根据季节和症状变化灵活调整检查频率"
+  },
+  "generalNotes": "甲状腺功能每3-6个月复查一次，过敏症状监测可根据季节和症状变化灵活调整检查频率。请遵循张医生的医嘱。"
+}

@@ -1,0 +1,80 @@
+{
+  "diagnosis": {
+    "name": "花粉过敏症",
+    "type": "allergy",
+    "icon": "🌿",
+    "color": "#00b894",
+    "sort": 200
+  },
+  "testInfo": {
+    "date": "2025-01-20",
+    "time": "14:30",
+    "method": "免疫印迹法",
+    "institution": "某市人民医院检验科"
+  },
+  "results": [
+    {
+      "category": "树木花粉",
+      "allergen": "杨树花粉",
+      "sensitivity": "高敏感",
+      "igeValue": "15.2",
+      "season": "春季高发",
+      "isAllergic": true
+    },
+    {
+      "category": "树木花粉",
+      "allergen": "柳树花粉",
+      "sensitivity": "高敏感",
+      "igeValue": "12.8",
+      "season": "春季高发",
+      "isAllergic": true
+    },
+    {
+      "category": "针叶树花粉",
+      "allergen": "柏树花粉",
+      "sensitivity": "中敏感",
+      "igeValue": "8.5",
+      "season": "春季",
+      "isAllergic": true
+    },
+    {
+      "category": "阔叶树花粉",
+      "allergen": "榆树花粉",
+      "sensitivity": "中敏感",
+      "igeValue": "7.2",
+      "season": "春季",
+      "isAllergic": true
+    },
+    {
+      "category": "豆科植物花粉",
+      "allergen": "槐树花粉",
+      "sensitivity": "中敏感",
+      "igeValue": "6.8",
+      "season": "晚春/初夏",
+      "isAllergic": true
+    }
+  ],
+  "medications": [
+    {
+      "name": "氯雷他定片",
+      "dosage": "每日1次，每次10mg",
+      "timing": "餐后服用",
+      "indication": "适用于过敏性鼻炎、荨麻疹等过敏症状的缓解",
+      "icon": "💊"
+    }
+  ],
+  "recommendations": {
+    "diagnosis": "您对多种树木花粉（杨树、柳树、柏树、榆树、槐树）呈现过敏反应，其中杨树和柳树花粉过敏程度较高。这些过敏原主要在春季集中释放，是导致您春季过敏症状的主要原因。",
+    "treatment": "建议采用抗组胺药物（如氯雷他定）进行症状控制，结合环境管理和预防措施。症状严重时可考虑鼻用糖皮质激素喷剂或免疫治疗。",
+    "seasonalProtection": "春季（3-5月）是主要过敏期，外出时佩戴口罩和护目镜，关闭门窗，使用空气净化器。",
+    "medicationGuidance": "氯雷他定按需服用，症状严重时可在医生指导下调整剂量或联合其他抗过敏药物。",
+    "environmentalManagement": [
+      "避免在花粉浓度高的时间段（早晨6-10点）外出",
+      "回家后立即洗手洗脸，更换衣物",
+      "定期清洁空调滤网，保持室内空气清洁",
+      "考虑在过敏季节前开始预防性用药"
+    ],
+    "symptoms": "如出现严重鼻塞、持续打喷嚏、眼部瘙痒红肿、呼吸困难等症状加重，请及时就医调整治疗方案。",
+    "followUp": "建议每年过敏季节前复查过敏原，监测过敏程度变化。如症状控制不佳，可考虑脱敏治疗。"
+  }
+}

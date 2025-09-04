@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eve月经历史 - 健康追踪</title>
+    <!-- 引入通用样式 -->
+    <link rel="stylesheet" href="../common/eve-common.css">
+    <!-- 引入样式文件 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/vant@4.9.15/lib/index.css"
+      rel="stylesheet"
+    />
+    <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- 动画库 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    
+    <link rel="shortcut icon" href="../../res/img/eveac.ico" type="image/x-icon" />
+    <style>
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+
+      #app {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px 20px 0 0;
+        min-height: 100vh;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        overflow: hidden;
+      }
+
+      .van-tabs__wrap {
+        background: linear-gradient(90deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+        border-radius: 20px 20px 0 0;
+      }
+
+      .van-tab--active {
+        color: #ff6b9d !important;
+        font-weight: bold;
+      }
+
+      .van-tabs__line {
+        background: #ff6b9d !important;
+        height: 3px !important;
+        border-radius: 2px;
+      }
+
+      .tab-content {
+        padding: 20px;
+        background: #fff;
+      }
+
+      .stats-card {
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 15px 0;
+        color: white;
+        box-shadow: 0 8px 25px rgba(255, 106, 157, 0.3);
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .stat-item {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      .stat-number {
+        font-size: 24px;
+        font-weight: bold;
+        color: #ff6b9d;
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: #666;
+      }
+
+      .van-cell {
+        border-radius: 10px !important;
+        margin: 8px 0 !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+        border: none !important;
+        animation: slideInRight 0.5s ease-out;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .van-cell::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 4px;
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      }
+
+      .next-period {
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%) !important;
+        color: white !important;
+        font-weight: bold;
+      }
+
+      .next-period .van-cell__title,
+      .next-period .van-cell__value,
+      .next-period .van-cell__label {
+        color: white !important;
+      }
+
+      .chart-container {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      .chart-title {
+        text-align: center;
+        color: #ff6b9d;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+
+      #container {
+        max-height: 800px !important;
+      }
+
+      #chart-controls {
+        text-align: center;
+        margin: 15px 0 0 0;
+      }
+
+      #chart-controls .van-button {
+        margin: 0 8px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        border: none;
+        color: white;
+      }
+
+      .van-field {
+        border-radius: 15px !important;
+        margin: 15px 0 !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+        border: none !important;
+      }
+
+      .pulse-dot {
+        position: relative;
+      }
+
+      .pulse-dot::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 15px;
+        transform: translateY(-50%);
+        width: 10px;
+        height: 10px;
+        background: #ff6b9d;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: translateY(-50%) scale(0.95);
+          box-shadow: 0 0 0 0 rgba(255, 107, 157, 0.7);
+        }
+        70% {
+          transform: translateY(-50%) scale(1);
+          box-shadow: 0 0 0 10px rgba(255, 107, 157, 0);
+        }
+        100% {
+          transform: translateY(-50%) scale(0.95);
+          box-shadow: 0 0 0 0 rgba(255, 107, 157, 0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideInRight {
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+      }
+
+      .chart-navigation {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 15px;
+        margin: 15px 0;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(10px);
+      }
+
+      .chart-navigation .van-button {
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        border: none;
+        color: white;
+        border-radius: 20px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      .chart-navigation .van-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 106, 157, 0.4);
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #ff6b9d;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+        margin: 20px 0;
+      }
+
+      .calendar-day {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .calendar-day.has-period {
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        color: white;
+        font-weight: bold;
+      }
+
+      .calendar-day.predicted {
+        background: rgba(255, 106, 157, 0.3);
+        color: #ff6b9d;
+        border: 2px dashed #ff6b9d;
+      }
+    </style>
+  </head>
+
+  <body>
+    <a href="../" class="eve-button eve-back-button">返回健康中心</a>
+    
+    <!-- 返回顶部按钮 -->
+    <button class="back-to-top" id="backToTop" title="返回顶部">
+      ↑
+    </button>
+    
+    <div id="app">
+      <van-tabs :active="active" @change="onChange">
+        <van-tab title="📅 历史记录">
+          <div class="tab-content">
+            <!-- 统计卡片 -->
+            <div class="stats-card">
+              <h3 style="margin: 0 0 15px 0; text-align: center;">📊 周期统计</h3>
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <div class="stat-number">{{ avgCycle }}</div>
+                  <div class="stat-label">平均周期</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number">{{ minCycle }}</div>
+                  <div class="stat-label">最短周期</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number">{{ maxCycle }}</div>
+                  <div class="stat-label">最长周期</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number">{{ totalRecords }}</div>
+                  <div class="stat-label">记录总数</div>
+                </div>
+              </div>
+            </div>
+
+            <van-field
+              v-model="year_search"
+              center
+              :clearable="true"
+              label="年份:"
+              placeholder="输入年份进行检索"
+              type="number"
+              clickable
+              style="margin: 0 auto"
+              @input="searchByYear"
+              left-icon="notes-o"
+              label-width="45"
+              @focus="searchInputFocus"
+            >
+            </van-field>
+
+            <div v-if="loading" class="loading-spinner">
+              <div class="spinner"></div>
+            </div>
+
+            <van-cell
+              v-for="(item, index) in list"
+              :key="index"
+              center
+              :title="getTimes(index)"
+              :value="'日期: '+item.last_time_date_f"
+              :label="timeSum(index)"
+              :class="{ 'next-period': index === 0, 'pulse-dot': index === 0 }"
+            />
+          </div>
+        </van-tab>
+
+        <van-tab title="📆 日历视图">
+          <div class="tab-content">
+            <div class="chart-container">
+              <div class="chart-title">{{ currentYear }}年 {{ currentMonth }}月</div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <van-button size="small" @click="previousMonth">← 上月</van-button>
+                <van-button size="small" @click="nextMonth">下月 →</van-button>
+              </div>
+              <div class="calendar-grid">
+                <div v-for="day in calendarDays" :key="day.date" 
+                     :class="['calendar-day', { 'has-period': day.hasPeriod, 'predicted': day.predicted }]"
+                     @click="dayClicked(day)">
+                  {{ day.day }}
+                </div>
+              </div>
+              <div style="margin-top: 20px; font-size: 12px; color: #666;">
+                <div>🔴 生理期（7天周期）</div>
+                <div>⭕ 预测日期</div>
+              </div>
+            </div>
+          </div>
+        </van-tab>
+
+        <van-tab title="📈 图表分析">
+          <div class="tab-content">
+            <!-- 导航菜单 -->
+            <div class="chart-navigation">
+              <van-button 
+                type="primary" 
+                size="small" 
+                @click="scrollToChart('distributionChart')"
+                style="margin: 5px;"
+              >
+                📊 周期分布统计
+              </van-button>
+              <van-button 
+                type="primary" 
+                size="small" 
+                @click="scrollToChart('cycleChart')"
+                style="margin: 5px;"
+              >
+                📈 周期长度趋势
+              </van-button>
+            </div>
+            
+            <div class="chart-container" id="cycleChartContainer">
+              <div class="chart-title">周期长度趋势（最近一年）</div>
+              <canvas id="cycleChart" width="400" height="200"></canvas>
+              
+              <div id="chart-controls">
+                <van-button type="primary" size="small" @click="updateChartRange('3m')">近3个月</van-button>
+                <van-button type="primary" size="small" @click="updateChartRange('6m')">近6个月</van-button>
+                <van-button type="primary" size="small" @click="updateChartRange('1y')">近1年</van-button>
+                <van-button type="primary" size="small" @click="updateChartRange('all')">全部</van-button>
+              </div>
+            </div>
+            
+            <div class="chart-container" id="distributionChartContainer">
+              <div class="chart-title">周期分布统计</div>
+              <canvas id="distributionChart" width="400" height="200"></canvas>
+            </div>
+          </div>
+        </van-tab>
+      </van-tabs>
+    </div>
+  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vant/2.12.41/vant.min.js"></script>
+
+  <script>
+    let that = {};
+    var listData = [];
+    let cycleChart = null;
+    let distributionChart = null;
+    
+    // 常量定义
+    const RECORD_START_NUMBER = 120; // 记录开始编号
+    
+    new Vue({
+      el: "#app",
+      data() {
+        return {
+          year_search: "",
+          active: 0,
+          list: [],
+          list_yuji: [],
+          loading: true,
+          chartRange: 'all',
+          currentYear: new Date().getFullYear(),
+          currentMonth: new Date().getMonth() + 1,
+          calendarDays: [],
+          startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)),
+          dataLoaded: false, // 添加数据加载状态标记
+        };
+      },
+      computed: {
+        avgCycle() {
+          if (!this.dataLoaded || !listData.length) return '0天';
+          // 获取最近10个月的数据
+          const now = new Date();
+          const tenMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 10, 1);
+          const recentData = listData.filter(item => new Date(item.last_time_date_f) >= tenMonthsAgo);
+          
+          const cycles = recentData.map(item => parseInt(item.interval_last_month)).filter(days => days > 0 && days < 100);
+          if (cycles.length === 0) return '0天';
+          const avg = cycles.reduce((sum, days) => sum + days, 0) / cycles.length;
+          return Math.round(avg) + '天';
+        },
+        minCycle() {
+          if (!this.dataLoaded || !listData.length) return '0天';
+          // 获取最近10个月的数据
+          const now = new Date();
+          const tenMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 10, 1);
+          const recentData = listData.filter(item => new Date(item.last_time_date_f) >= tenMonthsAgo);
+          
+          const cycles = recentData.map(item => parseInt(item.interval_last_month)).filter(days => days > 0 && days < 100);
+          if (cycles.length === 0) return '0天';
+          return Math.min(...cycles) + '天';
+        },
+        maxCycle() {
+          if (!this.dataLoaded || !listData.length) return '0天';
+          // 获取最近10个月的数据
+          const now = new Date();
+          const tenMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 10, 1);
+          const recentData = listData.filter(item => new Date(item.last_time_date_f) >= tenMonthsAgo);
+          
+          const cycles = recentData.map(item => parseInt(item.interval_last_month)).filter(days => days > 0 && days < 100);
+          if (cycles.length === 0) return '0天';
+          return Math.max(...cycles) + '天';
+        },
+        totalRecords() {
+          if (!this.dataLoaded) return 0;
+          return listData.length + RECORD_START_NUMBER;
+        }
+      },
+      mounted() {
+        this.generateCalendar();
+      },
+      created() {
+        that = this;
+        this.init();
+      },
+      methods: {
+        searchInputFocus(e) {},
+        searchByYear(e) {
+          if (e) {
+            let newData = [];
+            for (let i = 0; i <= listData.length - 1; i++) {
+              if (listData[i].last_time_date_f.indexOf(e) > -1) {
+                newData.push(listData[i]);
+              }
+            }
+            that.list = newData;
+          } else {
+            that.list = listData;
+          }
+        },
+        init() {
+          this.loading = true;
+          $.ajax({
+            type: "GET",
+            url: "ym.json",
+            dataType: "json",
+            success: function (data) {
+              // 使用JSON中已有的interval_last_month作为间隔天数
+              listData = data.map((item, index) => {
+                let currentDate = new Date(item.last_time);
+                // 使用JSON中已有的间隔天数
+                let diffDays = parseInt(item.interval_last_month);
+
+                return {
+                  ...item,
+                  diff_days: diffDays,
+                  last_time_date_f: currentDate.toISOString().split("T")[0],
+                };
+              });
+
+              that.list = listData;
+
+              // Calculate the next expected date
+              if (listData.length > 0) {
+                let first = JSON.parse(JSON.stringify(listData[0]));
+                let date = new Date(first.last_time_date_f);
+                date.setDate(date.getDate() + first.diff_days);
+
+                if (!isNaN(date.getTime())) {
+                  first.last_time_date_f = date.toISOString().split("T")[0];
+                  that.list.unshift(first);
+                } else {
+                  console.error("Invalid date value:", first.last_time_date_f);
+                }
+              }
+              
+              that.loading = false;
+              that.dataLoaded = true; // 标记数据已加载完成
+              that.generateCalendar();
+            },
+          });
+        },
+        onChange(e, f) {
+          if (e == 1) {
+            setTimeout(function () {
+              that.generateCalendar();
+            }, 300);
+          } else if (e == 2) {
+            setTimeout(function () {
+              that.initChart();
+            }, 500);
+          }
+        },
+        initChart() {
+          this.createCycleChart();
+          this.createDistributionChart();
+        },
+        createCycleChart() {
+          const ctx = document.getElementById('cycleChart');
+          if (!ctx) return;
+
+          // 默认显示最近一年的数据
+          const now = new Date();
+          const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+          const recentData = listData.filter(item => new Date(item.last_time_date_f) >= oneYearAgo);
+          
+          // 使用月份作为标签
+          const labels = recentData.map(item => {
+            const date = new Date(item.last_time_date_f);
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+          });
+          const data = recentData.map(item => parseInt(item.interval_last_month));
+
+          if (cycleChart) {
+            cycleChart.destroy();
+          }
+
+          cycleChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: labels.reverse(),
+              datasets: [{
+                label: '周期长度（天）',
+                data: data.reverse(),
+                borderColor: 'rgb(255, 106, 157)',
+                backgroundColor: 'rgba(255, 106, 157, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: 'rgb(255, 106, 157)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6
+              }]
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: false,
+                  min: 20,
+                  max: 40,
+                  title: {
+                    display: true,
+                    text: '天数'
+                  }
+                },
+                x: {
+                  title: {
+                    display: true,
+                    text: '月份'
+                  }
+                }
+              },
+              plugins: {
+                legend: {
+                  display: false
+                }
+              },
+              animation: {
+                duration: 2000,
+                easing: 'easeInOutQuart'
+              }
+            }
+          });
+        },
+        createDistributionChart() {
+          const ctx = document.getElementById('distributionChart');
+          if (!ctx) return;
+
+          const cycles = listData.map(item => parseInt(item.interval_last_month)).filter(days => days > 0 && days < 100);
+          const distribution = {};
+          cycles.forEach(cycle => {
+            distribution[cycle] = (distribution[cycle] || 0) + 1;
+          });
+
+          const labels = Object.keys(distribution).sort((a, b) => a - b);
+          const data = labels.map(label => distribution[label]);
+
+          if (distributionChart) {
+            distributionChart.destroy();
+          }
+
+          distributionChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: labels.map(label => `${label}天`),
+              datasets: [{
+                data: data,
+                backgroundColor: [
+                  'rgba(255, 106, 157, 0.8)',
+                  'rgba(255, 154, 158, 0.8)',
+                  'rgba(254, 207, 239, 0.8)',
+                  'rgba(255, 179, 198, 0.8)',
+                  'rgba(255, 198, 217, 0.8)',
+                  'rgba(255, 106, 157, 0.6)',
+                  'rgba(255, 154, 158, 0.6)',
+                  'rgba(254, 207, 239, 0.6)'
+                ],
+                borderWidth: 2,
+                borderColor: '#fff'
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: 'bottom'
+                }
+              },
+              animation: {
+                duration: 2000,
+                easing: 'easeInOutQuart'
+              }
+            }
+          });
+        },
+        getFilteredData() {
+          const now = new Date();
+          let cutoffDate;
+
+          switch (this.chartRange) {
+            case '3m':
+              cutoffDate = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+              break;
+            case '6m':
+              cutoffDate = new Date(now.getFullYear(), now.getMonth() - 6, 1);
+              break;
+            case '1y':
+              cutoffDate = new Date(now.getFullYear() - 1, now.getMonth(), 1);
+              break;
+            default:
+              return listData;
+          }
+
+          return listData.filter(item => new Date(item.last_time_date_f) >= cutoffDate);
+        },
+        updateChartRange(range) {
+          this.chartRange = range;
+          this.createCycleChart();
+        },
+        scrollToChart(chartId) {
+          let targetId;
+          if (chartId === 'cycleChart') {
+            targetId = 'cycleChartContainer';
+          } else if (chartId === 'distributionChart') {
+            targetId = 'distributionChartContainer';
+          }
+          
+          const element = document.getElementById(targetId);
+          if (element) {
+            element.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+            
+            // 添加高亮效果
+            element.style.transition = 'all 0.3s ease';
+            element.style.boxShadow = '0 0 20px rgba(255, 106, 157, 0.6)';
+            element.style.transform = 'scale(1.02)';
+            
+            setTimeout(() => {
+              element.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.1)';
+              element.style.transform = 'scale(1)';
+            }, 1000);
+          }
+        },
+        generateCalendar() {
+          const year = this.currentYear;
+          const month = this.currentMonth;
+          const firstDay = new Date(year, month - 1, 1);
+          const lastDay = new Date(year, month, 0);
+          const daysInMonth = lastDay.getDate();
+          const startDayOfWeek = firstDay.getDay();
+
+          this.calendarDays = [];
+
+          // Add empty days for the start of the month
+          for (let i = 0; i < startDayOfWeek; i++) {
+            this.calendarDays.push({ day: '', date: '', hasPeriod: false, predicted: false });
+          }
+
+          // Add days of the month
+          for (let day = 1; day <= daysInMonth; day++) {
+            const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const currentDate = new Date(dateStr);
+            
+            // Check if this date is within 7 days of any period start date
+            let hasPeriod = false;
+            for (let item of listData) {
+              const periodStartDate = new Date(item.last_time_date_f);
+              const diffDays = (currentDate - periodStartDate) / (1000 * 3600 * 24);
+              // Check if current date is within 7 days (0-6 days) after period start
+              if (diffDays >= 0 && diffDays <= 6) {
+                hasPeriod = true;
+                break;
+              }
+            }
+            
+            // Check if it's a predicted date (within next 7 days of last period + average cycle)
+            let predicted = false;
+            if (listData.length > 0 && !hasPeriod) {
+              const lastPeriod = new Date(listData[0].last_time_date_f);
+              const avgCycleNum = parseInt(this.avgCycle);
+              if (!isNaN(avgCycleNum)) {
+                const predictedDate = new Date(lastPeriod);
+                predictedDate.setDate(predictedDate.getDate() + avgCycleNum);
+                
+                const diffDays = Math.abs((currentDate - predictedDate) / (1000 * 3600 * 24));
+                predicted = diffDays <= 3; // Within 3 days of predicted date
+              }
+            }
+
+            this.calendarDays.push({
+              day: day,
+              date: dateStr,
+              hasPeriod: hasPeriod,
+              predicted: predicted
+            });
+          }
+        },
+        previousMonth() {
+          if (this.currentMonth === 1) {
+            this.currentMonth = 12;
+            this.currentYear--;
+          } else {
+            this.currentMonth--;
+          }
+          this.generateCalendar();
+        },
+        nextMonth() {
+          if (this.currentMonth === 12) {
+            this.currentMonth = 1;
+            this.currentYear++;
+          } else {
+            this.currentMonth++;
+          }
+          this.generateCalendar();
+        },
+        dayClicked(day) {
+          if (day.hasPeriod) {
+            // Find which period this date belongs to
+            const currentDate = new Date(day.date);
+            for (let item of listData) {
+              const periodStartDate = new Date(item.last_time_date_f);
+              const diffDays = (currentDate - periodStartDate) / (1000 * 3600 * 24);
+              // Check if current date is within 7 days (0-6 days) after period start
+              if (diffDays >= 0 && diffDays <= 6) {
+                const dayInCycle = Math.floor(diffDays) + 1;
+                this.$toast(`${day.date}\n开始日期: ${item.last_time_date_f}\n第${dayInCycle}天\n间隔: ${item.interval_last_month}天`);
+                break;
+              }
+            }
+          }
+        },
+        getTimes(index) {
+          let str = "";
+          if (index === 0) {
+            str = "🔮 下次预测: "+ this.list[index].last_time_date_f + " ";
+          }
+          return str + "第" + (this.list.length - index + RECORD_START_NUMBER) + "次";
+        },
+        getTimes2(index) {
+          return "第" + (this.list.length - index + RECORD_START_NUMBER + 1) + "次";
+        },
+        timeSum(index) {
+          const days = this.list[index].diff_days;
+          let emoji = "📅";
+          if (days < 25) emoji = "⚡";
+          else if (days > 35) emoji = "⏰";
+          return `${emoji} 间隔: ${days}天`;
+        },
+        onClickLeft() {
+          history.go(-1);
+        },
+      },
+    });
+
+    window.onload = function () {
+      const control = document.querySelector(".van-field__control");
+      if (control) {
+        control.addEventListener("focus", function () {
+          this.type = "number";
+        });
+      }
+
+      // 返回顶部按钮功能
+      window.addEventListener('scroll', function() {
+        const backToTopBtn = document.getElementById('backToTop');
+        if (window.pageYOffset > 300) {
+          backToTopBtn.classList.add('show');
+        } else {
+          backToTopBtn.classList.remove('show');
+        }
+      });
+
+      document.getElementById('backToTop').addEventListener('click', function() {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    };
+  </script>
+</html>

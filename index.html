@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <meta http-equiv="refresh" content="0; url=bad.html"> -->
+    <title>Eve's Magic Toolbox</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/element-ui@2.15.14/lib/theme-chalk/index.css"
+    />
+    <link rel="shortcut icon" href="res/img/eveac.ico" type="image/x-icon" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="src/css/img.css" />
+    <style>
+      body {
+        overflow-x: hidden;
+        background: linear-gradient(135deg, #f8f4ff 0%, #f0f8ff 25%, #faf0f8 50%, #f5f5ff 100%);
+        min-height: 100vh;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      }
+      
+      /* 搜索区域样式 */
+      .search-container {
+        background: linear-gradient(135deg, #c39bd3 0%, #bb8fce 50%, #a569bd 100%);
+        padding: 40px 20px;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(195, 155, 211, 0.3);
+        position: relative;
+      }
+      
+      .search-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" font-size="20" fill="rgba(255,255,255,0.08)">✨</text></svg>') repeat;
+        background-size: 60px 60px;
+        opacity: 0.1;
+      }
+      
+      .page-title {
+        color: white;
+        font-size: 2.5rem;
+        margin: 0 0 30px 0;
+        font-weight: 300;
+        text-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        position: relative;
+        z-index: 1;
+      }
+      
+      .search-box {
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
+      
+      .search-box .el-input__inner {
+        height: 50px;
+        font-size: 16px;
+        border-radius: 25px;
+        border: 2px solid rgba(195, 155, 211, 0.3);
+        box-shadow: 0 6px 20px rgba(195, 155, 211, 0.2);
+        padding-left: 50px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+      }
+      
+      .search-box .el-input__inner:focus {
+        border-color: #bb8fce;
+        box-shadow: 0 0 20px rgba(187, 143, 206, 0.3);
+      }
+      
+      .search-box .el-input__prefix {
+        left: 20px;
+      }
+      
+      /* 无结果提示样式 */
+      .no-results {
+        width: 100%;
+        text-align: center;
+        padding: 60px 20px;
+      }
+      
+      /* 新增菜单样式 */
+      .menu-container {
+        width: 98%;
+        display: flex;
+        padding: 30px 15px; /* 增加顶部间距 */
+        flex-wrap: wrap; /* 新增：允许换行 */
+        margin: 0 auto;
+        gap: 15px; /* 添加网格间距 */
+      }
+      @media (min-width: 1366px) {
+        .menu-btn {
+          margin: 0;
+          border-radius: 20px;
+          padding: 25px 30px;
+          font-size: 16px;
+          flex: 1 1 30%;
+          max-width: 30%;
+          text-align: center;
+          box-sizing: border-box;
+          background: linear-gradient(135deg, #c39bd3 0%, #bb8fce 50%, #a569bd 100%);
+          border: 2px solid rgba(195, 155, 211, 0.3);
+          color: white;
+          font-weight: 500;
+          box-shadow: 0 8px 25px rgba(195, 155, 211, 0.4);
+          transition: all 0.3s ease;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .menu-btn::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+          transform: rotate(45deg);
+          transition: all 0.6s;
+          opacity: 0;
+        }
+        
+        .menu-btn:hover {
+          transform: translateY(-8px) scale(1.02);
+          box-shadow: 0 15px 40px rgba(195, 155, 211, 0.5);
+          border-color: rgba(187, 143, 206, 0.6);
+          background: linear-gradient(135deg, #d2b4de 0%, #c39bd3 50%, #bb8fce 100%);
+        }
+        
+        .menu-btn:hover::before {
+          opacity: 1;
+          left: 100%;
+        }
+        
+        .menu-btn:active {
+          transform: translateY(-4px) scale(0.98);
+        }
+      }
+      /* 修改响应式设计 */
+      @media (max-width: 768px) {
+        .page-title {
+          font-size: 1.8rem;
+          margin-bottom: 25px;
+        }
+        
+        .search-container {
+          padding: 25px 15px;
+        }
+        
+        .menu-container {
+          padding: 25px 15px;
+          gap: 15px;
+        }
+        
+        .menu-btn {
+          flex-basis: 100% !important;
+          width: 100% !important;
+          max-width: 100% !important;
+          padding: 20px !important;
+          font-size: 18px !important;
+          min-height: 65px !important;
+          margin: 0 !important;
+          border-radius: 15px;
+          background: linear-gradient(135deg, #c39bd3 0%, #bb8fce 50%, #a569bd 100%);
+          border: 2px solid rgba(195, 155, 211, 0.3);
+          color: white;
+          font-weight: 500;
+          box-shadow: 0 6px 20px rgba(195, 155, 211, 0.4);
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+        }
+        
+        .menu-btn:active {
+          transform: scale(0.95);
+          box-shadow: 0 4px 15px rgba(195, 155, 211, 0.3);
+        }
+        
+        .search-box .el-input__inner {
+          height: 50px;
+          font-size: 16px;
+          padding-left: 50px;
+        }
+        
+        .search-box .el-input__prefix {
+          left: 18px;
+        }
+        
+        .footer {
+          padding: 25px 15px;
+          font-size: 13px;
+        }
+      }
+      
+      /* 针对小屏幕手机的额外优化 */
+      @media (max-width: 480px) {
+        .page-title {
+          font-size: 1.6rem;
+          margin-bottom: 20px;
+        }
+        
+        .search-container {
+          padding: 20px 10px;
+        }
+        
+        .menu-container {
+          padding: 20px 10px;
+        }
+        
+        .menu-btn {
+          padding: 18px !important;
+          font-size: 16px !important;
+          min-height: 60px !important;
+          border-radius: 12px;
+        }
+        
+        .search-box .el-input__inner {
+          height: 45px;
+          font-size: 15px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <!-- 添加顶部搜索区域 -->
+      <div class="search-container">
+        <h1 class="page-title">✨ Eve's Magic Toolbox <span @click="go2yima">🎀</span></h1>
+        <div class="search-box">
+          <el-input
+            v-model="searchQuery"
+            placeholder="Search for your favorite tools~ ✨"
+            prefix-icon="el-icon-search"
+            clearable
+            size="large"
+            @input="filterMenuItems"
+          ></el-input>
+        </div>
+      </div>
+      
+      <div class="menu-container">
+        <!-- 菜单容器 - 显示过滤后的结果 -->
+        <el-button
+          v-for="item in filteredMenuItems"
+          :key="item.index"
+          :icon="item.icon"
+          @click="openNewWindow(item)"
+          class="menu-btn"
+          type="primary"
+        >
+          {{ item.title }}
+        </el-button>
+        
+        <!-- 无搜索结果提示 -->
+        <div v-if="filteredMenuItems.length === 0 && searchQuery" class="no-results">
+          <el-empty description="No matching tools found~ Try different keywords 🌸">
+            <el-button type="primary" @click="clearSearch">Clear Search</el-button>
+          </el-empty>
+        </div>
+      </div>
+      <div class="footer">
+        © Copyright Eve Studio <span @click="go2yima">💌</span> <span id="currentYear"></span>
+      </div>
+    </div>
+  </body>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-ui@2.15.14/lib/index.js"></script>
+
+  <style>
+    /* 底部样式优化 */
+    .footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #7d3c98;
+      font-size: 14px;
+      background: linear-gradient(135deg, rgba(195, 155, 211, 0.1) 0%, rgba(248, 244, 255, 0.8) 100%);
+      backdrop-filter: blur(15px);
+      border-top: 2px solid rgba(195, 155, 211, 0.2);
+      margin-top: 40px;
+      font-weight: 500;
+    }
+    
+    .footer span {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+    
+    .footer span:hover {
+      color: #a569bd;
+      transform: scale(1.1);
+    }
+    
+    /* 删除原有的媒体查询，使用更统一的样式 */
+    .menu-btn {
+      transition: all 0.3s ease; /* 添加过渡效果 */
+    }
+  </style>
+
+  <script>
+    // 在Vue实例前添加设备检测函数
+    function isMobileDevice() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    var mainApp = new Vue({
+      el: "#app",
+      data: {
+        isMobile: isMobileDevice(),
+        isCollapse: false,
+        active: 0,
+        searchQuery: '', // 搜索关键词
+        filteredMenuItems: [], // 过滤后的菜单项
+        menuItems: [
+          {
+            index: "7",
+            dataCode: "fund",
+            icon: "el-icon-money",
+            title: "Fund💴 ",
+          },
+          {
+            index: "6",
+            dataCode: "pengbu",
+            icon: "el-icon-s-grid",
+            title: "Canvas Grid Generator🎨",
+          },
+          //{
+          //  index: "7",
+          //  dataCode: "yongchi",
+          //  icon: "el-icon-water-cup",
+          //  title: "异形泳池生成图",
+          //},
+          {
+            index: "1",
+            dataCode: "imgcut",
+            icon: "el-icon-scissors",
+            title: "Batch Image Cutter✂️ ",
+          },
+          {
+            index: "4",
+            dataCode: "wu_sun_bi_li",
+            icon: "el-icon-crop",
+            title: "Perfect Ratio Cropper💎",
+          },
+          {
+            index: "3",
+            dataCode: "water_img",
+            icon: "el-icon-edit-outline",
+            title: "Watermark Batch Tool🌸 ",
+          },
+          {
+            index: "2",
+            dataCode: "juancai",
+            icon: "el-icon-cpu",
+            title: "Roll Diameter Calculator📐 ",
+          },
+        ],
+      },      
+      mounted() {
+        this.filteredMenuItems = [...this.menuItems]; // 初始化过滤结果
+        // 移除window resize监听，让CSS媒体查询处理响应式
+      },
+      beforeDestroy() {
+        // 移除resize监听器
+      },
+      methods: {
+        openNewWindow(item) {
+          const path = `src/view/${item.dataCode}/`;
+          window.open(path, "_blank");
+        }, 
+        handleResize(){
+          // 保留设备检测功能，但不再手动设置样式
+          this.isMobile = isMobileDevice();
+        },
+        updateButtonStyle() {
+          // 移除手动样式设置，让CSS媒体查询处理响应式
+          // 这个方法现在只用于检测设备类型
+        },
+        go2yima(){
+          window.open("./health");
+        },
+        // 搜索功能
+        filterMenuItems() {
+          if (!this.searchQuery.trim()) {
+            this.filteredMenuItems = [...this.menuItems];
+          } else {
+            this.filteredMenuItems = this.menuItems.filter(item =>
+              item.title.toLowerCase().includes(this.searchQuery.toLowerCase())
+            );
+          }
+        },
+        // 清空搜索
+        clearSearch() {
+          this.searchQuery = '';
+          this.filteredMenuItems = [...this.menuItems];
+        },
+        // /methods
+      },
+    });
+
+    // 动态设置当前年月日
+    var date = new Date();
+    document.getElementById("currentYear").innerHTML =
+      date.getFullYear() +
+      "年" +
+      (date.getMonth() + 1).toString().padStart(2, "0") +
+      "月" +
+      date.getDate().toString().padStart(2, "0") +
+      "日";
+  </script>
+</html>

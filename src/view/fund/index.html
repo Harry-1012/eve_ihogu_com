@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keep Buying</title>
+    <!-- 引入外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.svg" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="index.css">
+    <!-- 配置Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                        neutral: '#1F2937',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script> 
+</head>
+<body class="bg-gray-50 font-sans text-neutral">
+    <div id="app" class="min-h-screen flex flex-col"> 
+        <!-- 主要内容 -->
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <!-- 切换按钮 -->
+            <div class="flex justify-center  gap-4">
+                <button 
+                    @click="switchView('cloud')"
+                    :class="['switch-btn', view === 'cloud' ? 'active' : 'inactive']"
+                >
+                    <i class="fa fa-th-large mr-2"></i>云图视图
+                </button>
+                <button 
+                    @click="switchView('pie')"
+                    :class="['switch-btn', view === 'pie' ? 'active' : 'inactive']"
+                >
+                    <i class="fa fa-pie-chart mr-2"></i>饼图视图
+                </button>
+            </div>
+            
+            <!-- 图表容器 -->
+            <div class="bg-white rounded-xl shadow-md p-6 md:p-8 mb-8 transition-all duration-500 min-h-[400px]">
+                <!-- 云图容器 -->
+                <div :class="['cloud-container', view !== 'cloud' ? 'view-hidden' : '']"></div>
+                
+                <!-- 饼图容器 -->
+                <div :class="['chart-wrapper', view !== 'pie' ? 'view-hidden' : '']">
+                    <div class="chart-container">
+                        <canvas id="donutChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 数据表格 -->
+            <div class="bg-white rounded-xl shadow-md p-6 md:p-8">
+                    <h2 class="text-l font-semibold">资产分配详情
+                        <span class="ml-3 text-sm font-normal text-gray-500">当前策略: 
+                            <b class="text-gray-800">{{ currentPreset }}</b>
+                        </span>
+                        <span class="ml-4 text-sm text-gray-600">预期年收益: 
+                            <b class="text-green-700">{{ yuji.shouyi }}%</b> ≈ 
+                            <b class="text-green-700">{{ formatAmount(expectedReturnAmount()) }} 万</b>
+                        </span>
+                        <span class="ml-4 text-sm text-gray-600">预期回撤: 
+                            <b class="text-red-700">{{ yuji.huiche }}%</b> ≈ 
+                            <b class="text-red-700">{{ formatAmount(expectedDrawdownAmount()) }} 万</b>
+                        </span>
+                    </h2>
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex gap-3 items-center"  style="flex-wrap: wrap;">
+                        <div class="flex items-center gap-2">
+                            <label for="totalAmount" class="text-sm text-gray-600 whitespace-nowrap">总金额(万)</label>
+                            <input 
+                                id="totalAmount"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                v-model.number="totalAmount"
+                                class="w-28 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                title="单位：万"
+                            >
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-500">预设:</span>
+                            <button @click="switchPreset('保守')" :class="['btn-action', currentPreset==='保守' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300']">保守</button>
+                            <button @click="switchPreset('稳健')" :class="['btn-action', currentPreset==='稳健' ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-700 hover:bg-blue-200']">稳健</button>
+                            <button @click="switchPreset('激进')" :class="['btn-action', currentPreset==='激进' ? 'bg-red-700 text-white' : 'bg-red-100 text-red-700 hover:bg-red-200']">激进</button>
+                        </div>
+                        <button 
+                            @click="openModal(-1)"
+                            class="btn-action bg-primary text-white hover:bg-primary/90"
+                        >
+                            <i class="fa fa-plus mr-1"></i> 新增资产
+                        </button>
+                        <button 
+                            @click="exportData"
+                            class="btn-action bg-green-600 text-white hover:bg-green-700"
+                        >
+                            <i class="fa fa-download mr-1"></i> 导出数据
+                        </button>
+                    </div>
+                </div>
+                
+                <div 
+                    class="mb-4 text-right text-sm font-medium"
+                    :class="totalPercentage !== 100 ? 'text-red-500' : 'text-green-500'"
+                >
+                    总占比: {{ totalPercentage }}% {{ totalPercentage !== 100 ? '(请调整至100%)' : '' }}
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">资产类别</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">占比</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">金额(万)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">说明</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr 
+                                v-for="(item, index) in tableAssets" 
+                                :key="index"
+                                class="hover:bg-gray-50 transition-colors"
+                            >
+                                <td class=" whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div 
+                                            class="w-3 h-3 rounded-full mr-2" 
+                                            :style="{ backgroundColor: item.color }"
+                                        ></div>
+                                        <div class="font-medium">{{ item.name }}</div>
+                                    </div>
+                                </td>
+                                <td class=" whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="w-6 bg-gray-200 rounded-full h-2 mr-2">
+                                            <div 
+                                                class="bg-primary h-2 rounded-full" 
+                                                :style="{ width: `${item.percentage}%` }"
+                                            ></div>
+                                        </div>
+                                        <span>{{ item.percentage }}%</span>
+                                    </div>
+                                </td>
+                                <td class=" whitespace-nowrap font-medium">{{ formatAmount(assetAmount(item)) }}</td>
+                                <td class=" text-sm text-gray-600">{{ item.description }}</td>
+                                <td class=" whitespace-nowrap">
+                                    <div class="flex gap-2">
+                                        <button 
+                                            @click="openModal(index)"
+                                            class="edit-btn btn-action bg-blue-100 text-blue-700 hover:bg-blue-200"
+                                        >
+                                            <i class="fa fa-pencil"></i>
+                                        </button>
+                                        <button 
+                                            @click="deleteAsset(index)"
+                                            class="delete-btn btn-action bg-red-100 text-red-700 hover:bg-red-200"
+                                        >
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+        
+        <!-- 页脚 -->
+        <footer class="bg-neutral text-white py-6 px-4">
+            <div class="container mx-auto text-center">
+                <p>投资组合可视化工具 &copy; EVE TOOLS</p>
+            </div>
+        </footer>
+        
+        <!-- 编辑资产模态框 -->
+        <div 
+            v-if="isModalOpen"
+            class="modal-backdrop"
+            @click.self="closeModal"
+        >
+            <div class="modal-content">
+                <h3 class="text-lg font-semibold mb-4">{{ modalTitle }}</h3>
+                <form @submit.prevent="saveAsset">
+                    <input type="hidden" v-model="currentIndex">
+                    
+                    <div class="mb-4">
+                        <label for="assetName" class="block text-sm font-medium text-gray-700 mb-1">资产名称</label>
+                        <input 
+                            type="text" 
+                            id="assetName" 
+                            v-model="formData.name"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                            required
+                        >
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="assetPercentage" class="block text-sm font-medium text-gray-700 mb-1">占比 (%)</label>
+                        <input 
+                            type="number" 
+                            id="assetPercentage" 
+                            v-model="formData.percentage"
+                            min="1" 
+                            max="100" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                            required
+                        >
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="assetDescription" class="block text-sm font-medium text-gray-700 mb-1">说明</label>
+                        <input 
+                            type="text" 
+                            id="assetDescription" 
+                            v-model="formData.description"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                            required
+                        >
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="assetColor" class="block text-sm font-medium text-gray-700 mb-1">颜色</label>
+                        <input 
+                            type="color" 
+                            id="assetColor" 
+                            v-model="formData.color"
+                            class="w-full h-10 border border-gray-300 rounded-md" 
+                            required
+                        >
+                    </div>
+                    
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button 
+                            type="button" 
+                            @click="closeModal"
+                            class="btn-action bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        >
+                            取消
+                        </button>
+                        <button 
+                            type="submit" 
+                            class="btn-action bg-primary text-white hover:bg-primary/90"
+                        >
+                            保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="fund_data_list.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
+    

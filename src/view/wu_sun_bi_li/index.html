@@ -1,0 +1,182 @@
+﻿<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="../../../res/img/eveac.ico" type="image/x-icon" />
+    <title>图片批处理 裁剪/水印</title>
+    <link
+      rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/element-ui@2.15.14/lib/theme-chalk/index.css"
+    />
+    <link rel="stylesheet" href="../../css/img.css" />
+  </head>
+  <section id="imgPage">
+    <hr>
+    <h1 style="text-align: center;">图片无损-比例-裁切</h1>
+    <hr>
+
+    <el-form label-position='left' label-width='100%' style="margin-left: 15px;">
+        <el-form-item label="宽高比:" style="width: 300px; " :label-width="formLabelWidth">
+            <el-input size='small ' type='number' :disabled='cutImgType==1 && cutImgH!=""' placeholder="宽(宽比值)"
+                v-model="cutImgW" clearable>
+            </el-input>
+            <el-input size='small ' type='number' :disabled='cutImgType==1 && cutImgH!=""' placeholder="高度(高比值)"
+                v-model="cutImgH" clearable>
+            </el-input>
+        </el-form-item>
+
+        <el-form-item label="缩放裁切类型" :label-width="formLabelWidth">
+            <el-select @change='selectTypeChange' size='small ' style="width: 300px;" v-model="cutImgType" clearable
+                placeholder="请选择缩放裁切类型">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+            </el-select>
+        </el-form-item>
+    </el-form>
+    <div style="margin-bottom: 5px;">
+        <el-button @click="startGo" v-if='sumCount!=1' size="small" type="warning">开始下载</el-button>
+        <el-tag v-if="sumCount!=1" type="success">成功数量:{{sumCount-1}}</el-tag>
+    </div>
+    <el-upload multiple='true' limit='500' :on-success='uploadFileSuccess' :on-error='uploadFileError'
+        class="upload-demo" :action="uploadAction()" :on-preview="handlePreview" :on-remove="handleRemove"
+        :file-list="fileList" list-type="picture">
+        <el-button size="small" v-if='showUploadDom()' type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png/jpeg文件,且不超过5M,一次最多500个</div>
+    </el-upload>
+
+</section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/element-ui@2.15.14/lib/index.js"></script>
+<script>
+    new Vue({
+        el: '#imgPage',
+        data: {
+            isAddWater: false,
+            formLabelWidth: '130px',
+            waterImgType: 1,
+            options: [{
+                'value': 2,
+                'label': '填充',
+            }, {
+                'value': 3,
+                'label': '居中',
+            }, {
+                'value': 4,
+                'label': '左上角',
+            }, {
+                'value': 5,
+                'label': '右下角',
+            }
+            ],
+            showInputW: '',
+            showInputH: '',
+            opcity: 80,
+            cutImgType: null,
+            cutImgH: '',
+            cutImgW: '',
+            active: 0,
+            fileList: [],
+            allSuccessFile: [],
+            warterImgName: '',
+            waterImgHeight: 100,
+            waterImgWidth: 100,
+            sumCount: 1,
+            showUploadDom: function () {
+                let res = false;
+                if (this.cutImgType && this.cutImgType != 1 && this.cutImgH && this.cutImgW) {
+                    res = true;
+                } else if (this.cutImgType) {
+                    if (this.cutImgType == 1) {
+                        if (this.cutImgH || this.cutImgW) {
+                            res = true;
+                        } else {
+                            res = false;
+                        }
+                    }
+                } else {
+                    res = false;
+                }
+                return res;
+            },
+            uploadAction: function () {
+                let url = '../../../../public/index.php?s=Examples_EveUpload.go';
+                url = url + '&imgWidth=' + this.cutImgW;
+                url = url + '&imgHeight=' + this.cutImgH;
+                url = url + '&type=' + this.cutImgType;
+                url = url + '&wu_sun_bi_li=wu_sun_bi_li';
+                return url;
+            },
+            waterimageUrl: '',
+        },
+        methods: {
+            selectTypeChange(value) {
+                if (value === 1) {
+                    this.cutImgH = '';
+                }
+            },
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePreview(file) {
+                console.log(file);
+            },
+            uploadFileSuccess(res, file, fileList) {
+                this.$message({
+                    showClose: true,
+                    message: '[' + file.name + ' ]上传成功',
+                    type: 'success'
+                });
+                this.allSuccessFile.push(res.data.filename);
+                let listFileForServer = this.allSuccessFile;
+                this.sumCount = this.sumCount + 1;
+            },
+            uploadFileError(res, file, fileList) {
+                this.sumCount = this.sumCount + 1;
+                this.$message({
+                    message: file.name + ' 上传失败!',
+                    duration: 0,
+                    type: 'warning'
+                });
+            },
+            startGo() {
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在执行批处理...即将开始下载,请稍候...',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                let listFileForServer = this.allSuccessFile;
+                $.ajax({
+                    url: "../../../../public/index.php?s=Examples_EveUpload.zipfile",
+                    data: {
+                        list: listFileForServer,
+                    },
+                    timeout: 1000 * 60 * 5,
+                    type: "POST",
+                    success: function (res) {
+                        setTimeout(() => {
+                            loading.close();
+                        }, 666);
+                        location.href = res.data.url;
+                    }
+                });
+            },
+            handleAvatarSuccess(res, file) {
+                this.waterimageUrl = URL.createObjectURL(file.raw);
+                this.warterImgName = res.data.filename;
+            },
+            beforeAvatarUpload(file) {
+                const isJPG = file.type == 'image/jpeg' || file.type == 'image/png' || file.type == 'image/jpg';
+                const isLt2M = file.size / 1024 / 1024 < 5;
+
+                if (!isJPG) {
+                    this.$message.error('上传水印图片只能是 JPG/PNG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传水印图片大小不能超过 5MB!');
+                }
+                return isJPG && isLt2M;
+            },
+        }
+    });
+</script>

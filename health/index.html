@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eve健康管理系统</title>
+    <!-- 引入通用样式 -->
+    <link rel="stylesheet" href="common/eve-common.css">
+    <!-- 引入通用样式 -->
+    <link rel="stylesheet" href="common/eve-common.css">
+    <link rel="shortcut icon" href="../res/img/eveac.ico" type="image/x-icon" />
+    <style>
+        /* 页面特定样式 */
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(253, 121, 168, 0.3);
+            text-align: center;
+            min-width: 300px;
+            border: 2px solid rgba(253, 121, 168, 0.1);
+        }
+
+        .modal-title {
+            color: #d63384;
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #fab1a0;
+            border-radius: 15px;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .password-input:focus {
+            border-color: #fd79a8;
+            box-shadow: 0 0 10px rgba(253, 121, 168, 0.2);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 15px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .confirm-btn {
+            background: linear-gradient(45deg, #fd79a8, #fdcb6e);
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #fab1a0;
+        }
+
+        .modal-btn:hover {
+            opacity: 0.8;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        /* 返回按钮特殊样式 */
+        .eve-button-back {
+            background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 50%, #fab1a0 100%) !important;
+            border: 2px solid rgba(253, 121, 168, 0.3) !important;
+            color: white !important;
+            padding: 8px 16px !important;
+            font-size: 14px !important;
+            margin-top: 20px !important;
+            align-self: flex-start !important;
+            min-width: auto !important;
+        }
+
+        .eve-button-back:hover {
+            background: linear-gradient(135deg, #ff8a95 0%, #fd79a8 50%, #fdcb6e 100%) !important;
+            box-shadow: 0 8px 20px rgba(253, 121, 168, 0.4) !important;
+            transform: translateY(-2px) scale(1.02) !important;
+        }
+
+        .eve-button-back:active {
+            transform: translateY(-1px) scale(0.98) !important;
+        }
+    </style>
+</head>
+<body class="eve-background-simple eve-container-center">
+    <div class="eve-card eve-container-small">
+        <h1 class="eve-title eve-title-large eve-title-with-flowers">Eve健康管理系统</h1>
+        <div class="buttons">
+            <button class="eve-button eve-button-large" onclick="showPasswordModal('生理记录')">💕 Eve生理记录</button>
+            <button class="eve-button eve-button-large" onclick="showPasswordModal('健康档案')">📋 Eve健康档案</button>
+        </div>
+        
+        <!-- 返回按钮放在底部 -->
+        <button class="eve-button eve-button-back" onclick="goBackToEveTools()">✨ 前往✨Eve Tools</button>
+    </div>
+
+    <!-- 密码验证模态框 -->
+    <div id="passwordModal" class="password-modal">
+        <div class="modal-content">
+            <h3 class="modal-title">请输入密码</h3>
+            <input type="password" id="passwordInput" class="password-input" placeholder="请输入密码" maxlength="10">
+            <div class="modal-buttons">
+                <button class="modal-btn confirm-btn" onclick="verifyPassword()">确认</button>
+                <button class="modal-btn cancel-btn" onclick="closePasswordModal()">取消</button>
+            </div>
+            <div id="errorMessage" class="error-message">密码错误，请重试</div>
+        </div>
+    </div>
+
+    <script>
+        let currentTarget = '';
+        const correctPassword = '2468';
+        const STORAGE_KEY = 'eve_health_auth';
+
+        // 检查是否已经验证过密码
+        function isAuthenticated() {
+            const authData = localStorage.getItem(STORAGE_KEY);
+            if (authData) {
+                try {
+                    const data = JSON.parse(authData);
+                    // 检查是否在24小时内验证过（可选的安全措施）
+                    const now = new Date().getTime();
+                    const authTime = data.timestamp;
+                    const oneDay = 24 * 60 * 60 * 1000; // 24小时
+                    
+                    // 如果想要永久保存，可以注释掉下面的时间检查
+                    // return data.authenticated === true;
+                    
+                    // 24小时内有效
+                    return data.authenticated === true && (now - authTime) < oneDay;
+                } catch (e) {
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        // 保存验证状态
+        function saveAuthStatus() {
+            const authData = {
+                authenticated: true,
+                timestamp: new Date().getTime()
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(authData));
+        }
+
+        // 清除验证状态（可用于登出功能）
+        function clearAuthStatus() {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+
+        function showPasswordModal(target) {
+            // 如果已经验证过，直接跳转
+            if (isAuthenticated()) {
+                navigateToTarget(target);
+                return;
+            }
+            
+            currentTarget = target;
+            document.getElementById('passwordModal').style.display = 'block';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('passwordInput').focus();
+        }
+
+        function navigateToTarget(target) {
+            if (target === '生理记录') {
+                window.location.href = '../health/ym/';
+            } else if (target === '健康档案') {
+                window.location.href = '../health/check/';
+            }
+        }
+
+        // 返回Eve Tools主页
+        function goBackToEveTools() {
+            // 从health目录返回到上级目录的index.html
+            window.location.href = '../index.html';
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            currentTarget = '';
+        }
+
+        function verifyPassword() {
+            const inputPassword = document.getElementById('passwordInput').value;
+            
+            if (inputPassword === correctPassword) {
+                // 密码正确，保存验证状态
+                saveAuthStatus();
+                
+                // 跳转到相应页面
+                navigateToTarget(currentTarget);
+                closePasswordModal();
+            } else {
+                // 密码错误，显示错误信息
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        // 支持回车键确认
+        document.getElementById('passwordInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                verifyPassword();
+            }
+        });
+
+        // 点击模态框外部关闭
+        document.getElementById('passwordModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closePasswordModal();
+            }
+        });
+
+        // 防止页面刷新时显示模态框
+        window.addEventListener('load', function() {
+            closePasswordModal();
+        });
+    </script>
+</body>
+</html>

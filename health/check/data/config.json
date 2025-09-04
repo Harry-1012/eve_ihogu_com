@@ -1,0 +1,70 @@
+{
+  "activeTests": ["allergy", "thyroid", "thyroid_history", "blood", "checkup_2020", "checkup_2021"],
+  "availableTests": {
+    "thyroid": {
+      "name": "甲状腺功能",
+      "dataFile": "year/2024/thyroid.json",
+      "hasChart": true,
+      "order": 2
+    },
+    "thyroid_history": {
+      "name": "甲状腺历史对比",
+      "dataFile": "history/thyroid_history.json",
+      "hasChart": true,
+      "order": 3
+    },
+    "allergy": {
+      "name": "过敏原检测",
+      "dataFile": "year/2025/allergy.json",
+      "hasChart": false,
+      "order": 1
+    },
+    "blood": {
+      "name": "血常规",
+      "dataFile": "year/2024/blood.json",
+      "hasChart": false,
+      "order": 4
+    },
+    "liver": {
+      "name": "肝功能",
+      "dataFile": "liver.json",
+      "hasChart": false,
+      "order": 5
+    },
+    "kidney": {
+      "name": "肾功能",
+      "dataFile": "kidney.json",
+      "hasChart": false,
+      "order": 6
+    },
+    "checkup_2020": {
+      "name": "2020年体检",
+      "dataFile": "year/2020/checkup.json",
+      "hasChart": false,
+      "order": 7
+    },
+    "checkup_2021": {
+      "name": "2021年体检",
+      "dataFile": "year/2021/checkup.json",
+      "hasChart": false,
+      "order": 8
+    }
+  },
+  "patientInfo": {
+    "name": "患者A",
+    "lastUpdate": "2025-01-25",
+    "institution": "某市人民医院检验科",
+    "doctors": "张医生（内分泌科/过敏科）"
+  },
+  "followUpSchedule": {
+    "thyroid": "每3-6个月复查一次",
+    "thyroid_history": "历史数据对比分析，用于趋势观察",
+    "allergy": "根据季节和症状变化灵活调整检查频率",
+    "blood": "每年体检时检查",
+    "liver": "每6个月检查一次",
+    "kidney": "每年检查一次",
+    "checkup_2020": "历史体检数据，用于对比分析",
+    "checkup_2021": "历史体检数据，用于对比分析"
+  },
+  "generalNotes": "请根据张医生建议定期复查各项指标，如有异常及时就医。"
+}

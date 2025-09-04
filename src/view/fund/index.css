@@ -1,0 +1,122 @@
+/* 自定义工具类转换为普通CSS */
+.content-auto {
+  content-visibility: auto;
+}
+
+.cloud-item {
+  display: flex;
+  align-items: center;
+  transition: all 300ms;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.cloud-item:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: scale(1.05);
+}
+
+.cloud-container {
+  display: grid;
+  gap: 0;
+  padding: 1rem;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  min-height: 400px;
+}
+
+.chart-container {
+  width: 100%;
+  max-width: 4xl;
+  margin-left: auto;
+  margin-right: auto;
+  aspect-ratio: 1 / 1;
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+}
+
+.switch-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 300ms;
+  outline: none;
+}
+
+.switch-btn:focus {
+  ring: 2px solid currentColor;
+  ring-offset: 2px;
+}
+
+.switch-btn.active {
+  background-color: #3b82f6;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.switch-btn.inactive {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.switch-btn.inactive:hover {
+  background-color: #d1d5db;
+}
+
+.view-hidden {
+  display: none !important;
+}
+
+.btn-action {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 200ms;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-width: 28rem;
+  width: 100%;
+  padding: 1.5rem;
+  transform: transition all;
+}
+
+.cloud-item-content {
+  color: white;
+  font-weight: 500;
+  text-align: left;
+  padding: 0.25rem;
+  padding-left: 0.5rem;
+  width: 100%;
+}
+
+
+.divide-y td {
+  text-align: center;
+}

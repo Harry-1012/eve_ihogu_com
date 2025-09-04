@@ -1,0 +1,103 @@
+{
+  "diagnosis": {
+    "name": "血液筛查检测",
+    "type": "blood",
+    "icon": "🩸",
+    "color": "#e74c3c",
+    "sort": 100
+  },
+  "testInfo": {
+    "date": "2024-12-26",
+    "time": "抽血时检测",
+    "method": "血液筛查检测",
+    "institution": "某市血液中心"
+  },
+  "donationInfo": {
+    "volume": "10mL",
+    "status": "合格",
+    "bloodType": "B型",
+    "rhType": "Rh(D)阳性"
+  },
+  "results": [
+    {
+      "name": "HIV RNA (艾滋病毒核糖核酸)",
+      "value": "阴性",
+      "unit": "",
+      "status": "合格",
+      "reference": "阴性",
+      "isNormal": true
+    },
+    {
+      "name": "HCV RNA (丙肝病毒核糖核酸)",
+      "value": "阴性",
+      "unit": "",
+      "status": "合格",
+      "reference": "阴性",
+      "isNormal": true
+    },
+    {
+      "name": "HBV DNA (乙肝病毒脱氧核糖核酸)",
+      "value": "阴性",
+      "unit": "",
+      "status": "合格",
+      "reference": "阴性",
+      "isNormal": true
+    },
+    {
+      "name": "ALT (丙氨酸氨基转移酶)",
+      "value": "合格",
+      "unit": "U/L",
+      "status": "合格",
+      "reference": "≤50",
+      "isNormal": true
+    },
+    {
+      "name": "HIV Ag/Ab (艾滋病抗体)",
+      "value": "阴性",
+      "unit": "",
+      "status": "合格",
+      "reference": "阴性",
+      "isNormal": true
+    },
+    {
+      "name": "Anti-TP (梅毒)",
+      "value": "阴性",
+      "unit": "",
+      "status": "合格",
+      "reference": "阴性",
+      "isNormal": true
+    },
+    {
+      "name": "Anti-HCV (丙型肝炎病毒抗体)",
+      "value": "阴性",
+      "unit": "",
+      "status": "合格",
+      "reference": "阴性",
+      "isNormal": true
+    },
+    {
+      "name": "HBsAg (乙型肝炎表面抗原)",
+      "value": "阴性",
+      "unit": "",
+      "status": "合格",
+      "reference": "阴性",
+      "isNormal": true
+    }
+  ],
+  "bloodTyping": {
+    "abo": "B型",
+    "rh": "Rh(D)阳性"
+  },
+  "recommendations": {
+    "diagnosis": "血液筛查检测全项合格，无传染性疾病标志物检出，肝功能正常",
+    "treatment": "无需特殊治疗，各项指标均正常。",
+    "lifestyle": [
+      "注意休息，多补充水分和营养",
+      "保持健康的生活方式，定期锻炼",
+      "均衡饮食，多食用富含蛋白质和铁质的食物",
+      "避免不安全的医疗操作和性行为",
+      "定期体检，维护血液健康"
+    ],
+    "donationNotes": ""
+  }
+}
